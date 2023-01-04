@@ -62,7 +62,7 @@ class AccounTestCase(APITestCase):
     def test_display_user(self):
         """This test case just check if the username created corresponds to ivantom"""
 
-        self.assertEquals(self.user1['user']['username'],"ivantom")
+        self.assertEqual(self.user1['user']['username'],"ivantom")
 
     def get_token(self,data:dict):
         # data = {
@@ -84,9 +84,11 @@ class AccounTestCase(APITestCase):
         }
         response = self.client.post('/api/auth/sing_in/',data)
 
-        # token = json.loads(response.content)['Token']
+        token = json.loads(response.content)['Token']
+
+        # print(token)
         
-        self.assertEquals(response.status_code,200)
+        self.assertEqual(response.status_code,200)
 
     def get_user1_account_info(self):
         
@@ -119,8 +121,8 @@ class AccounTestCase(APITestCase):
         response = self.client.get('/api/account/')
         # data = json.loads(response.content)
 
-        # self.assertEquals(data[0]['balance'],0,'The account balance must be empty')
-        self.assertEquals(response.status_code,200,'Passed')
+        # self.assertEqual(data[0]['balance'],0,'The account balance must be empty')
+        self.assertEqual(response.status_code,200,'Passed')
 
     def test_set_account_balance_of_user1_to_5000(self):
 
@@ -134,8 +136,8 @@ class AccounTestCase(APITestCase):
         response  = self.client.patch('/api/account/{}/'.format(data['id']),{'balance':5000})
         data = json.loads(response.content)
         # print(response.content)
-        self.assertEquals(response.status_code,200,'Passed')
-        self.assertEquals(data['balance'],5000,"The balance must be 5000")
+        self.assertEqual(response.status_code,200,'Passed')
+        self.assertEqual(data['balance'],5000,"The balance must be 5000")
 
     def test_set_account_balance_of_user2_to_10000(self):
 
@@ -150,8 +152,8 @@ class AccounTestCase(APITestCase):
         response  = self.client.patch('/api/account/{}/'.format(data['id']),{'balance':10000})
         data = json.loads(response.content)
         # print(response.content)
-        self.assertEquals(response.status_code,200,'Passed')
-        self.assertEquals(data['balance'],10000,"The balance must be 5000")
+        self.assertEqual(response.status_code,200,'Passed')
+        self.assertEqual(data['balance'],10000,"The balance must be 5000")
     
     def update_users_account(self,balance1:int=5000,balance2:int=10000):
         self.client.credentials(HTTP_AUTHORIZATION=f"token {self.token1}")
@@ -210,16 +212,16 @@ class AccounTestCase(APITestCase):
 
         print(transaction_data)
 
-        self.assertEquals(response.status_code,201,"Transaction must be successfull")
+        self.assertEqual(response.status_code,201,"Transaction must be successfull")
 
-        self.assertEquals(transaction_data['sender'],user_1_account_data['id'],"The account id must be equal")
+        self.assertEqual(transaction_data['sender'],user_1_account_data['id'],"The account id must be equal")
 
-        self.assertEquals(transaction_data['receiver'],user_2_account_data['id'],"The user id must be equal")
+        self.assertEqual(transaction_data['receiver'],user_2_account_data['id'],"The user id must be equal")
 
         # print(self.get_user1_account_info())
         # print(self.get_user2_account_info())
 
-        self.assertEquals(self.get_user2_account_info()['balance'],user_2_account_data['balance']+1000,"The account balance must be 11000")
+        self.assertEqual(self.get_user2_account_info()['balance'],user_2_account_data['balance']+1000,"The account balance must be 11000")
 
 
     def test_transfer_money_from_user1_to_user2_show_return_an_error(self):
@@ -259,17 +261,17 @@ class AccounTestCase(APITestCase):
 
         print(transaction_data)
 
-        self.assertEquals(response.status_code,200,"Transaction must be successfull")
+        self.assertEqual(response.status_code,200,"Transaction must be successfull")
 
-        self.assertEquals(transaction_data['detail'],'your balance is insufficient to complete this transaction')
+        self.assertEqual(transaction_data['detail'],'your balance is insufficient to complete this transaction')
         
         # Since the account balance of user 1 is insufficient the account balance must not change
 
         # print(self.get_user1_account_info())
         # print(self.get_user2_account_info())
 
-        self.assertEquals(self.get_user1_account_info()['balance'],200)
-        self.assertEquals(self.get_user2_account_info()['balance'],400)
+        self.assertEqual(self.get_user1_account_info()['balance'],200)
+        self.assertEqual(self.get_user2_account_info()['balance'],400)
 
 
 
